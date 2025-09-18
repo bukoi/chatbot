@@ -19,20 +19,35 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 # Configure Gemini API using the API key from settings
 genai.configure(api_key="AIzaSyDE5rgyd0AEew5Q3-3ip9v2oOTI6CPUp5M")
-
-# Default persona: Moriarty
 default_persona = (
-    "You are a master criminal like Moriarty from Sherlock Holmes. You are manipulative and your name is James Moriarty."
+    "You are an intelligent and helpful assistant. "
+    "You communicate in a clear, professional, and friendly manner. "
+    "You focus on providing accurate advice and structured recommendations without unnecessary embellishments or roleplaying."
 )
 
+system_instruction1 = (
+    "Organize your response using simple HTML tags such as <h3>, <ul>, <li>, <p>, and <strong> for clarity and structure. "
+    "Break long explanations into smaller paragraphs using <p>. "
+    "Use <h3> for headings and <ul><li> for lists where appropriate. "
+    "Avoid using complex or unsupported tags. "
+    "Ensure that each section is clearly labeled and easy to scan. "
+    "Summarize important points, explain technical terms simply, and guide the user with next steps or suggestions. "
+    "Focus on clarity, readability, and usability in all responses. "
+    "When providing recommendations, gather relevant details such as location, available space, rainfall data, and cost constraints. "
+    "Fetch up-to-date rainfall information as needed and use it to generate accurate suggestions. "
+    "Provide an approximate cost breakdown and nearby service providers where applicable."
+)
+
+
+
 # Initialize Gemini Model with the default (Moriarty) persona
+# Initialize Gemini Model with the Moriarty persona
 model = genai.GenerativeModel(
     model_name="gemini-2.0-flash",
     system_instruction=default_persona +
-    ". No abusive words. Max tokens=150."
-    "Use proper spacing in response"
-    "check what kind of responses user wants and engage them in a conversation you are a master communicator"
+    " " + system_instruction1,
 )
+
 
 # Helper function: Get or create a ChatSession for the client
 def get_chat_session(request, new_conversation=False):
@@ -103,6 +118,7 @@ class ChatbotAPIView(APIView):
 
         # Generate response using Gemini API
         api_response = model.generate_content(conversation, generation_config={"temperature": 0.9})
+        
 
         # Save model's response with conversation number
         ChatMessage.objects.create(

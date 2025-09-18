@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
 import { RiRobot2Fill } from "react-icons/ri";
-
+import DOMPurify from 'dompurify';
 export default function ChatBox({response_chats, user_chats, selected_conversation, switchConversation, user_image}) {
   // Combined chat history array with both user and bot messages
   const [chatHistory, setChatHistory] = useState([]);
   
   useEffect(() => {
     fetchChatHistory(selected_conversation);
-  }, [selected_conversation, switchConversation]);
+  }, [selected_conversation, switchConversation, response_chats]);
 
   const fetchChatHistory = async (conversationNumber) => {
     try {
@@ -71,27 +71,32 @@ export default function ChatBox({response_chats, user_chats, selected_conversati
   }, [user_image]);
 
   // Helper to render message content based on type
-  const renderMessageContent = (message) => {
-    if (message.message_type === 'image') {
-      return (
-        <img 
-          src={message.imageUrl} 
-          alt={`${message.type === 'user' ? 'User' : 'Bot'} image`} 
-          className="max-w-full max-h-64 rounded-lg object-contain"
-        />
-      );
-    } else if (message.message_type === 'audio') {
-      return (
-        <audio 
-          src={message.audioUrl} 
-          controls 
-          className="max-w-full" 
-        />
-      );
-    } else {
-      return message.content;
-    }
-  };
+  
+
+const renderMessageContent = (message) => {
+  if (message.message_type === 'image') {
+    return (
+      <img 
+        src={message.imageUrl} 
+        alt={`${message.type === 'user' ? 'User' : 'Bot'} image`} 
+        className="max-w-full max-h-64 rounded-lg object-contain"
+      />
+    );
+  } else if (message.message_type === 'audio') {
+    return (
+      <audio 
+        src={message.audioUrl} 
+        controls 
+        className="max-w-full" 
+      />
+    );
+  } else {
+    return (
+      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content) }} />
+    );
+  }
+};
+
 
   return (
     <div className="flex-grow p-6 overflow-auto space-y-6">

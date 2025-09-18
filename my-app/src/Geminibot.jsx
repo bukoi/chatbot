@@ -23,13 +23,13 @@ export default function Geminibot() {
     });
     const data = await response.json();
     console.log(data);
-    
+
   }
-  
+
   useEffect(() => {
     updateTitle();
   }, []);
-  
+
   const handleNewChat = async () => {
     try {
       const response = await fetch('http://localhost:8000/chatbot/new-chat/', {
@@ -47,7 +47,7 @@ export default function Geminibot() {
     }
     setNewchatindicator(true);
   }
-  
+
   const getCurrentConversationNumber = async () => {
     try {
       const response = await fetch('http://localhost:8000/chatbot/get-chats/', {
@@ -62,7 +62,7 @@ export default function Geminibot() {
       console.error('Error:', error);
     }
   }
-  
+
   const deleteChat = async () => {
     const response = await fetch('http://localhost:8000/chatbot/clear-history/', {
       method: 'POST',
@@ -74,10 +74,10 @@ export default function Geminibot() {
       })
     });
     const data = await response.json();
-    if(switchConversation === false){
+    if (switchConversation === false) {
       setSwitchConversation(true);
     }
-    else{
+    else {
       setSwitchConversation(false);
     }
   };
@@ -95,23 +95,23 @@ export default function Geminibot() {
       {/* Main Layout: Sidebar + Chat Section */}
       <div className="flex flex-grow overflow-hidden">
         {/* Sidebar */}
-        <Sidebar 
-          total_conversations={total_conversations} 
+        <Sidebar
+          total_conversations={total_conversations}
           selected_conversation={selected_conversation}
-          setSelectedConversation={setSelectedConversation} 
-          />
+          setSelectedConversation={setSelectedConversation}
+        />
 
         {/* Chat Section */}
         <div className="flex flex-col w-full h-full">
-          <ChatBox response_chats={response_chats} user_chats={user_chats} selected_conversation={selected_conversation} switchConversation={switchConversation} user_image={user_image}/>
-          <ChatBar 
+          <ChatBox response_chats={response_chats} user_chats={user_chats} selected_conversation={selected_conversation} switchConversation={switchConversation} user_image={user_image} />
+          <ChatBar
             deleteChat={deleteChat}
             user_image={user_image}
-            conversation_number={selected_conversation} 
-            setResponseChats={setResponseChats} 
-            setUserChats={setUserChats} 
+            conversation_number={selected_conversation}
+            setResponseChats={setResponseChats}
+            setUserChats={setUserChats}
             setUserImage={setUserImage}
-            />
+          />
         </div>
       </div>
     </div>
